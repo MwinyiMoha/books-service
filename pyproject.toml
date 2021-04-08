@@ -38,6 +38,13 @@ exclude = '''
 )/
 '''
 
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-raq --cov=. --cov-report html"
+testpaths = [
+	"tests"
+]
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
