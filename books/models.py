@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -15,6 +17,10 @@ class Book(BaseModel):
     def __str__(self):
         return self.title
 
+    @property
+    def times_rented(self):
+        return self.bookrent_set.count()
+
 
 class BookRent(BaseModel):
     user = models.ForeignKey(User, on_delete=models.PROTECT)
@@ -25,3 +31,15 @@ class BookRent(BaseModel):
 
     def __str__(self):
         return f"Book Rent By {self.user.username}"
+
+    @property
+    def rent_charge(self):
+        return self.days_rented * self.books.count() * 1
+
+    @property
+    def book_list(self):
+        return self.books.all()
+
+    @property
+    def return_date(self):
+        return self.created + timedelta(days=self.days_rented)
