@@ -23,7 +23,8 @@ class Book(BaseModel):
 
 
 class BookRent(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    # user = models.ForeignKey(User, on_delete=models.PROTECT)
+
     books = models.ManyToManyField(Book)
     days_rented = models.PositiveIntegerField(
         default=1, validators=[MinValueValidator(1)]

@@ -9,8 +9,8 @@ class BookAdmin(admin.ModelAdmin):
 
 
 class BookRentAdmin(admin.ModelAdmin):
-    list_display = ["user", "days_rented", "rent_charge", "return_date"]
-    list_display_links = ["user"]
+    list_display = ["pk", "days_rented", "rent_charge", "return_date"]
+    list_display_links = ["pk"]
 
 
 admin.site.register(Book, BookAdmin)
