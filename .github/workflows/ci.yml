@@ -22,3 +22,8 @@ jobs:
     - name: Run Tests
       run: |
         pytest
+    - name: Coverage To CC
+      if: success()
+      uses: paambaati/codeclimate-action@v2.7.5
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
