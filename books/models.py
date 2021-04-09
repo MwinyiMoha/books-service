@@ -31,7 +31,7 @@ class BookRent(BaseModel):
     )
 
     def __str__(self):
-        return f"Book Rent By {self.user.username}"
+        return f"Book Rent {self.pk}"
 
     @property
     def rent_charge(self):

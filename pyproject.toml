@@ -41,7 +41,7 @@ exclude = '''
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-raq --cov=. --cov-report html"
+addopts = "-raq --cov=. --cov-report html --ds=core.settings"
 testpaths = [
 	"tests"
 ]
