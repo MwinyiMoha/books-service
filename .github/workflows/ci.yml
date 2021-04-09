@@ -20,8 +20,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Run Tests
-      run: |
-        BOOKS_ENV=${{ secrets.BOOKS_ENV }} pytest
+      run: pytest
+      env:
+        BOOKS_ENV: ${{ secrets.BOOKS_ENV }}
+        SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
     - name: Coverage To CC
       if: success()
       uses: paambaati/codeclimate-action@v2.7.5
