@@ -52,8 +52,6 @@ class Book(BaseModel):
 
 
 class BookRent(BaseModel):
-    # user = models.ForeignKey(User, on_delete=models.PROTECT)
-
     books = models.ManyToManyField(Book)
     days_rented = models.PositiveIntegerField(
         default=1, validators=[MinValueValidator(1)]
@@ -64,7 +62,9 @@ class BookRent(BaseModel):
 
     @property
     def rent_charge(self):
-        return self.days_rented * self.books.count() * 1
+        return self.days_rented * sum(
+            self.books.values_list("price", flat=True)
+        )
 
     @property
     def book_list(self):
