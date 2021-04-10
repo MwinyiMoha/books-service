@@ -8,19 +8,30 @@ User = get_user_model()
 
 @pytest.fixture
 def book_fixture(db):
-    return Book.objects.create(
-        title="Sample Title",
-        author="John Doe",
-        description="Short book description",
-    )
+    def create_book(**kwargs):
+        return Book.objects.create(
+            title=kwargs["title"],
+            category=kwargs["category"],
+            author="John Doe",
+            description="Short book description",
+        )
+
+    return create_book
 
 
 @pytest.fixture
-def book_rent_fixture(db, book_fixture):
+def sample_book(db, book_fixture):
+    book = book_fixture(title="Sample Title", category=Book.TYPE_REGULAR)
+
+    return book
+
+
+@pytest.fixture
+def book_rent_fixture(db, sample_book):
     book_rent = BookRent()
     book_rent.save()
 
-    book_rent.books.add(book_fixture)
+    book_rent.books.add(sample_book)
     return book_rent
 
 
