@@ -46,6 +46,26 @@ class Book(BaseModel):
 
         super(Book, self).save(*args, **kwargs)
 
+    def calculate_charge(self, no_of_days):
+        if self.category == self.TYPE_FICTION:
+            return self.price * no_of_days
+
+        if self.category == self.TYPE_REGULAR:
+            min_charge = 2.0
+            if no_of_days <= 2:
+                return min_charge
+            else:
+                extra = (no_of_days - 2) * 1.5
+                return Decimal((min_charge + extra))
+
+        if self.category == self.TYPE_NOVEL:
+            min_charge = 4.5
+            if no_of_days <= 3:
+                return min_charge
+            else:
+                extra = (no_of_days - 3) * 1.5
+                return Decimal((min_charge + extra))
+
     @property
     def times_rented(self):
         return self.bookrent_set.count()
@@ -62,8 +82,8 @@ class BookRent(BaseModel):
 
     @property
     def rent_charge(self):
-        return self.days_rented * sum(
-            self.books.values_list("price", flat=True)
+        return sum(
+            [i.calculate_charge(self.days_rented) for i in self.books.all()]
         )
 
     @property
