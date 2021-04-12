@@ -1,4 +1,5 @@
 from datetime import timedelta
+from decimal import Decimal
 
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
@@ -10,12 +11,40 @@ User = get_user_model()
 
 
 class Book(BaseModel):
+
+    TYPE_FICTION = "fiction"
+    TYPE_REGULAR = "regular"
+    TYPE_NOVEL = "novel"
+
+    TYPE_CHOICES = (
+        (TYPE_FICTION, "Fiction"),
+        (TYPE_REGULAR, "Regular"),
+        (TYPE_NOVEL, "Novel"),
+    )
+
     title = models.CharField(max_length=99)
     author = models.CharField(max_length=99)
     description = models.TextField(null=True, blank=True)
+    category = models.CharField(
+        max_length=7, choices=TYPE_CHOICES, default=TYPE_REGULAR
+    )
+    price = models.DecimalField(
+        max_digits=10, decimal_places=2, default=Decimal("1.5")
+    )
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        if (
+            self.category == self.TYPE_NOVEL
+            or self.category == self.TYPE_REGULAR
+        ):
+            self.price = 1.5
+        else:
+            self.price = 3.0
+
+        super(Book, self).save(*args, **kwargs)
 
     @property
     def times_rented(self):
@@ -23,8 +52,6 @@ class Book(BaseModel):
 
 
 class BookRent(BaseModel):
-    # user = models.ForeignKey(User, on_delete=models.PROTECT)
-
     books = models.ManyToManyField(Book)
     days_rented = models.PositiveIntegerField(
         default=1, validators=[MinValueValidator(1)]
@@ -35,7 +62,9 @@ class BookRent(BaseModel):
 
     @property
     def rent_charge(self):
-        return self.days_rented * self.books.count() * 1
+        return self.days_rented * sum(
+            self.books.values_list("price", flat=True)
+        )
 
     @property
     def book_list(self):
