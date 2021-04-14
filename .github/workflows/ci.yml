@@ -24,10 +24,11 @@ jobs:
         pip install -r requirements.txt
     - name: Run Tests
       run: pytest
-    # - name: Coverage To CC
-    #   if: success()
-    #   uses: paambaati/codeclimate-action@v2.7.5
-    #   env:
-    #     CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-    #   with:
-    #     coverageCommand: coverage report -m pytest
+    - name: Coverage To Code Climate
+      if: success()
+      uses: paambaati/codeclimate-action@v2.7.5
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+      with:
+        coverageCommand: coverage json
+        coverageLocations: ${{github.workspace}}/coverage.json:coverage.py
